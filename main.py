@@ -59,6 +59,23 @@ async def debug_calendar():
         return {"ok": False, "error": str(e), "type": type(e).__name__, "env": env_status}
 
 
+@app.get("/debug/airtable")
+async def debug_airtable():
+    env_status = {
+        "AIRTABLE_API_KEY": "OK" if os.getenv("AIRTABLE_API_KEY") else "MANQUANT",
+        "AIRTABLE_BASE_ID": os.getenv("AIRTABLE_BASE_ID", "non defini"),
+        "AIRTABLE_TABLE_NAME": os.getenv("AIRTABLE_TABLE_NAME", "non defini"),
+    }
+    try:
+        from pyairtable import Api
+        api = Api(os.getenv("AIRTABLE_API_KEY"))
+        table = api.table(os.getenv("AIRTABLE_BASE_ID"), os.getenv("AIRTABLE_TABLE_NAME", "Rendez-vous"))
+        records = table.all(max_records=1)
+        return {"ok": True, "records_count": len(records), "env": env_status}
+    except Exception as e:
+        return {"ok": False, "error": str(e), "type": type(e).__name__, "env": env_status}
+
+
 # ── Webhook VAPI ─────────────────────────────────────────────────
 
 @app.post("/webhook")
