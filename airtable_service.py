@@ -2,6 +2,9 @@ from pyairtable import Api
 from datetime import datetime
 import json
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DEFAULT_AVAILABILITY = [
     {"id": "default", "label": "Semaine", "jours": [0, 1, 2, 3, 4], "debut": 9, "fin": 17}

@@ -28,10 +28,40 @@ async def dashboard_page():
 
 @router.get("/api/appointments")
 async def get_appointments(_=Depends(verify_token)):
-    table = get_table()
-    records = table.all(sort=["Date RDV"])
-    records.reverse()
-    return {"records": records, "total": len(records)}
+    try:
+        table = get_table()
+        records = table.all(sort=["Date RDV"])
+        records.reverse()
+        return {"records": records, "total": len(records)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur Airtable: {str(e)}")
+
+
+@router.get("/api/debug-airtable")
+async def debug_airtable(_=Depends(verify_token)):
+    """Endpoint de debug pour diagnostiquer la connexion Airtable."""
+    import os
+    api_key = os.getenv("AIRTABLE_API_KEY", "")
+    base_id = os.getenv("AIRTABLE_BASE_ID", "")
+    table_name = os.getenv("AIRTABLE_TABLE_NAME", "Rendez-vous")
+    try:
+        table = get_table()
+        records = table.all()
+        return {
+            "status": "OK",
+            "api_key_prefix": api_key[:15] + "...",
+            "base_id": base_id,
+            "table_name": table_name,
+            "record_count": len(records)
+        }
+    except Exception as e:
+        return {
+            "status": "ERREUR",
+            "api_key_prefix": api_key[:15] + "..." if api_key else "VIDE",
+            "base_id": base_id,
+            "table_name": table_name,
+            "error": str(e)
+        }
 
 
 @router.patch("/api/appointments/{record_id}/status")

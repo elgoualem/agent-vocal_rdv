@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Dashboard Railway</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        .result { background: #2a2a2a; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .error { background: #4a1a1a; }
+        .success { background: #1a4a1a; }
+        button { background: #6366f1; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; margin: 5px; }
+        button:hover { background: #5558dd; }
+        input { padding: 10px; width: 300px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Test Dashboard Railway</h1>
+
+    <div>
+        <label>Mot de passe:</label><br>
+        <input type="password" id="password" value="Cpjnjzb3">
+    </div>
+
+    <button onclick="testAuth()">1. Test Authentification</button>
+    <button onclick="testAppointments()">2. Test Appointments</button>
+    <button onclick="testAvailability()">3. Test Availability</button>
+
+    <div id="results"></div>
+
+    <script>
+        const BASE_URL = 'https://web-production-ca95d.up.railway.app';
+
+        function log(message, isError = false) {
+            const div = document.createElement('div');
+            div.className = 'result ' + (isError ? 'error' : 'success');
+            div.innerHTML = '<strong>' + new Date().toLocaleTimeString() + '</strong><br>' + message;
+            document.getElementById('results').prepend(div);
+        }
+
+        async function testAuth() {
+            const password = document.getElementById('password').value;
+            try {
+                const response = await fetch(BASE_URL + '/api/availability', {
+                    headers: { 'Authorization': 'Bearer ' + password }
+                });
+
+                if (response.status === 401) {
+                    log('❌ Authentification échouée - Mot de passe incorrect', true);
+                    return;
+                }
+
+                if (response.ok) {
+                    log('✅ Authentification réussie avec le mot de passe: ' + password);
+                    return;
+                }
+
+                log('⚠️ Status: ' + response.status, true);
+            } catch (error) {
+                log('❌ Erreur: ' + error.message, true);
+            }
+        }
+
+        async function testAppointments() {
+            const password = document.getElementById('password').value;
+            try {
+                const response = await fetch(BASE_URL + '/api/appointments', {
+                    headers: { 'Authorization': 'Bearer ' + password }
+                });
+
+                if (response.status === 401) {
+                    log('❌ Non autorisé - Vérifiez le mot de passe', true);
+                    return;
+                }
+
+                if (response.status === 500) {
+                    const text = await response.text();
+                    log('❌ Erreur serveur (500): ' + text, true);
+                    return;
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Appointments récupérés: ' + data.total + ' RDV<br><pre>' + JSON.stringify(data, null, 2) + '</pre>');
+                    return;
+                }
+
+                log('⚠️ Status: ' + response.status, true);
+            } catch (error) {
+                log('❌ Erreur: ' + error.message, true);
+            }
+        }
+
+        async function testAvailability() {
+            const password = document.getElementById('password').value;
+            try {
+                const response = await fetch(BASE_URL + '/api/availability', {
+                    headers: { 'Authorization': 'Bearer ' + password }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Disponibilités: <br><pre>' + JSON.stringify(data, null, 2) + '</pre>');
+                    return;
+                }
+
+                log('⚠️ Status: ' + response.status, true);
+            } catch (error) {
+                log('❌ Erreur: ' + error.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

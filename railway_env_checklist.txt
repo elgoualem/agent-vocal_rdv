@@ -1,0 +1,46 @@
+VARIABLES D'ENVIRONNEMENT POUR RAILWAY
+=======================================
+
+Copie-colle ces variables dans Railway > Variables :
+
+# ── VOTRE SOCIETE ──────────────────────────────────────
+COMPANY_NAME=topup
+COMPANY_DESCRIPTION=expert en automatisation et intelligence artificielle
+AGENT_FIRST_MESSAGE=Bonjour ! Vous etes sur la ligne de topup. Je suis votre assistante pour la prise de rendez-vous. Comment puis-je vous aider ?
+
+# ── VAPI ───────────────────────────────────────────────
+VAPI_PRIVATE_KEY=75688645-b7dc-4782-9ae3-32a273ddc94e
+VAPI_PUBLIC_KEY=621af185-4bd2-407e-a3de-9f0e23d9a912
+VAPI_ASSISTANT_ID=b74867fb-8dd0-4ff5-9d3f-985e2873f8a5
+
+# ── GOOGLE CALENDAR ────────────────────────────────────
+GOOGLE_CALENDAR_ID=primary
+GOOGLE_TOKEN_JSON=[A GENERER - voir ci-dessous]
+
+# ── AIRTABLE ───────────────────────────────────────────
+AIRTABLE_API_KEY=pat****** (copier depuis .env)
+AIRTABLE_BASE_ID=app9ARpnvh7J82J3O
+AIRTABLE_TABLE_NAME=Rendez-vous
+
+# ── WEBHOOK ────────────────────────────────────────────
+WEBHOOK_URL=https://web-production-ca95d.up.railway.app/webhook
+
+# ── DASHBOARD ──────────────────────────────────────────
+DASHBOARD_PASSWORD=Cpjnjzb3
+
+# ── OPENAI ─────────────────────────────────────────────
+OPENAI_API_KEY=sk-****** (copier depuis .env)
+
+# ── ELEVENLABS ─────────────────────────────────────────
+ELEVENLABS_API_KEY=sk_6270ff286354adc9d7e7fa742a22589a1fdd4248cb90318b
+
+=======================================
+IMPORTANT : GOOGLE_TOKEN_JSON
+=======================================
+
+Cette variable contient le token.json encodé en base64.
+Pour le générer, lance sur ton PC :
+
+    python encode_token.py
+
+Puis copie la valeur affichée et ajoute-la dans Railway.
