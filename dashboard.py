@@ -34,6 +34,9 @@ async def get_appointments(_=Depends(verify_token)):
         records.reverse()
         return {"records": records, "total": len(records)}
     except Exception as e:
+        import traceback
+        print(f"[ERREUR /api/appointments] {type(e).__name__}: {str(e)}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Erreur Airtable: {str(e)}")
 
 
@@ -248,8 +251,14 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       document.getElementById('login-error').classList.remove('hidden');
       return;
     }
+    if (!r.ok) {
+      console.error('Erreur API:', r.status);
+      document.getElementById('login-error').textContent = 'Erreur serveur. Verifiez les logs Railway.';
+      document.getElementById('login-error').classList.remove('hidden');
+      return;
+    }
     const data = await r.json();
-    allRecords = data.records;
+    allRecords = data.records || [];
     localStorage.setItem('dashboard_token', token);
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
